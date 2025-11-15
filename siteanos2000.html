@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priflix 2000</title>
+    <style>
+        /* Reset e Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background-color: #000;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #000000;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 1rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #9e0505;
+        }
+
+        .search {
+            display: flex;
+        }
+
+        .search input {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search button {
+            padding: 0.5rem;
+            border: none;
+            background-color: #144a10;
+            color: #fff;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .hero-content {
+            z-index: 1;
+            max-width: 600px;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            background-color: #0b8a0b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background-color: #0b8a0b;
+        }
+
+        /* Seções */
+        .section {
+            padding: 4rem 2rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .section.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: rgb(13, 159, 13);
+        }
+
+        .section p {
+            max-width: 800px;
+            margin: 0 auto 1rem;
+            text-align: left;
+        }
+
+        /* Scroll Horizontal */
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 0.5rem; /* Espaço reduzido entre os cards */
+            padding: 1rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #0b8a0b;
+            border-radius: 4px;
+        }
+
+        .character-card, .movie-card, .series-card {
+            min-width: 220px;
+            flex-shrink: 0;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Molduras de Livro Aprimoradas */
+        .character-card img, .movie-card img, .series-card img {
+            width: 180px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 8px solid #8B4513;
+            border-image: linear-gradient(45deg, #8B4513, #654321) 1;
+            box-shadow: 
+                0 0 25px rgba(0, 0, 0, 0.9),
+                inset 0 0 15px rgba(139, 69, 19, 0.6),
+                5px 5px 15px rgba(0, 0, 0, 0.7);
+            background: linear-gradient(45deg, #654321, #8B4513, #D2B48C);
+            padding: 15px;
+            position: relative;
+        }
+
+        .character-card img::before, .movie-card img::before, .series-card img::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid rgba(210, 180, 140, 0.3);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .character-card h3, .movie-card h3, .series-card h3 {
+            margin-top: 1rem;
+            color: #fff;
+        }
+
+        .status {
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+            color: #FFD700;
+            font-style: italic;
+        }
+
+        .details-btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #0b8a0b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0b8a0b;
+            padding: 2rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        footer nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        .newsletter {
+            margin-top: 1rem;
+        }
+
+        .newsletter input {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .newsletter button {
+            padding: 0.5rem;
+            border: none;
+            background-color: #000;
+            color: #fff;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            nav ul {
+                flex-direction: column;
+                display: none;
+            }
+            nav ul.active {
+                display: flex;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            .section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://br.web.img3.acsta.net/newsv7/14/12/30/21/21/2121160.jpg" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#history">Curiosidades</a></li>
+                <li><a href="#characters">Personagens</a></li>
+                <li><a href="#movies">Destaques</a></li>
+                <li><a href="#series">Preferidos</a></li>
+            </ul>
+        </nav>
+        <div class="search">
+            <input type="text" id="search-input" placeholder="Buscar personagens, filmes...">
+            <button id="search-btn">🔍</button>
+        </div>
+        <button class="menu-toggle" id="menu-toggle">☰</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <video autoplay muted loop class="hero-video">
+            <source src="rickvideo.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1>PRIFLIX 2000</h1>
+            <p>Explore heróis, vilões e aventuras épicas.</p>
+            <a href="#history" class="cta-button">Saiba Mais</a>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section id="history" class="section fade-in">
+        <h2>Curiosidades</h2>
+        <p>Os desenhos animados para TV surgiram a partir das primeiras exibições de animações no cinema e da expansão da televisão no início do século XX. Inicialmente, as transmissões para televisão exibiam desenhos já existentes nos cinemas, como "O Gato Félix" (1930), considerado um dos pioneiros no meio televisivo. Posteriormente, com o avanço da tecnologia, surgiram as primeiras produções exclusivas para a televisão, como "Willie the Worm" (1938) e, mais tarde, séries como "Crusader Rabbit" (1949) e "Huckleberry Hound" (1958), que definiram o formato do que hoje conhecemos como desenho animado televisivo.</p>
+    </section>
+
+    <!-- Characters Section -->
+    <section id="characters" class="section fade-in">
+        <h2>Personagens Icônicos</h2>
+        <div class="scroll-container" id="characters-container">
+            <!-- Cards serão criados dinamicamente aqui -->
+        </div>
+    </section>
+
+    <!-- Movies Section -->
+    <section id="movies" class="section fade-in">
+        <h2>Destaques</h2>
+        <div class="scroll-container" id="movies-container">
+            <!-- Cards serão criados dinamicamente aqui -->
+        </div>
+    </section>
+
+    <!-- Series Section -->
+    <section id="series" class="section fade-in">
+        <h2>Preferidos da TV</h2>
+        <div class="scroll-container" id="series-container">
+            <!-- Cards serão criados dinamicamente aqui -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 - Universo PRIFLIX 2000s</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Função para consumir API e criar cards dinamicamente
+        async function fetchAndCreateCards(containerId, apiUrl, cardClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<p>Carregando...</p>'; // Loading
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                container.innerHTML = ''; // Limpa loading
+
+                // Para Rick and Morty API, os dados estão em data.results
+                const items = data.results.slice(0, 8); // Limita a 8 itens para performance
+
+                items.forEach(character => {
+                    const card = document.createElement('div');
+                    card.className = cardClass;
+                    card.setAttribute('data-name', character.name);
+
+                    // Descrição adicional: Status + espécie
+                    const description = `Status: ${character.status} | Espécie: ${character.species}`;
+
+                    card.innerHTML = `
+                        <img src="${character.image}" alt="${character.name}">
+                        <h3>${character.name}</h3>
+                        <p class="status">${description}</p>
+                        <a href="https://www.adultswim.com/videos/rick-and-morty" target="_blank" class="details-btn">Ver Detalhes</a>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                container.innerHTML = '<p>Erro ao carregar. Tente novamente.</p>';
+            }
+        }
+
+        // Função para busca (filtra cards visíveis)
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput.value.toLowerCase();
+                const allCards = document.querySelectorAll('.character-card, .movie-card, .series-card');
+
+                allCards.forEach(card => {
+                    const name = card.getAttribute('data-name').toLowerCase();
+                    card.style.display = name.includes(query) ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Carrega dados ao iniciar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            // URLs da Rick and Morty API (páginas diferentes para variar)
+            fetchAndCreateCards('characters-container', 'https://rickandmortyapi.com/api/character?page=1', 'character-card'); // Página 1
+            fetchAndCreateCards('movies-container', 'https://rickandmortyapi.com/api/character?page=2', 'movie-card'); // Página 2
+            fetchAndCreateCards('series-container', 'https://rickandmortyapi.com/api/character?page=3', 'series-card'); // Página 3
+
+            setupSearch(); // Ativa busca
+
+            // Animações de fade-in (opcional, para as seções)
+            const sections = document.querySelectorAll('.section');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
+</body>
+</html>
